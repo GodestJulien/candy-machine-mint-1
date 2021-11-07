@@ -18,6 +18,7 @@ import {
   mintOneToken,
   shortenAddress,
 } from "./candy-machine";
+import { Height } from "@material-ui/icons";
 
 const ConnectButton = styled(WalletDialogButton)``;
 
@@ -105,7 +106,7 @@ const Home = (props: HomeProps) => {
         if (!status?.err) {
           setAlertState({
             open: true,
-            message: "Congratulations! Mint succeeded!",
+            message: "Congratulations! Mint succeeded! Check your new chameleon in your nft collection !",
             severity: "success",
           });
         } else {
@@ -166,31 +167,62 @@ const Home = (props: HomeProps) => {
   ]);
 
   return (
-    <main>
+    <main style={{
+    display: 'flex',
+    height: '100vh'}}>
+      <div style={{padding:'40px', 
+                  display:'flex', 
+                  flex:1, 
+                  flexDirection:'column', 
+    }}>
+      <div  style={{display:'flex', justifyContent:'space-between'}} >
       {wallet && (
-        <p>Wallet {shortenAddress(wallet.publicKey.toBase58() || "")}</p>
+        <p style={{color:'white',fontSize: '30px',
+        fontStyle: 'normal',
+        fontWeight: 'bold'}}>Your Wallet : {shortenAddress(wallet.publicKey.toBase58() || "")}</p>
       )}
+      <div></div>
+      <ConnectButton style={{height:'60px', width:'200px',justifyContent:'center', alignItems:'center'}}>{wallet ? "Connected" : "Connect Wallet"}</ConnectButton>
+      </div>
+      <div  style={{
+      flex:1, 
+      display:'flex', 
+      alignItems:'center', 
+      justifyContent:'center',
+      flexDirection:'column',
+      fontSize: '24px',
+      fontStyle: 'normal',
+      fontWeight: 'bold',
+      lineHeight:'50px'}}>
+{!wallet && (
+        <><p style={{
+              textTransform: 'uppercase',
+              fontSize: '50px',
+              fontWeight: 700,
+              lineHeight: '50px',
+              marginTop:"0px",
+              marginBottom:"10px"
+            }}
+            >MINT PAGE OF SOLCHAMIES SEASON 1
+            </p>
+            <p style={{fontFamily:"Droid Serif,Helvetica Neue,Helvetica,Arial,sans-serif", fontSize:'26px', fontStyle:'italic', lineHeight:'26px'}}>
 
-      {wallet && <p>Balance: {(balance || 0).toLocaleString()} SOL</p>}
-
-      {wallet && <p>Total Available: {itemsAvailable}</p>}
-
-      {wallet && <p>Redeemed: {itemsRedeemed}</p>}
-
-      {wallet && <p>Remaining: {itemsRemaining}</p>}
-
-      <MintContainer>
-        {!wallet ? (
-          <ConnectButton>Connect Wallet</ConnectButton>
-        ) : (
+            </p>Connect your Solana wallet</>
+)}
+{wallet && (
+      <MintContainer style={{marginBottom:'20px'}}>
           <MintButton
             disabled={isSoldOut || isMinting || !isActive}
             onClick={onMint}
             variant="contained"
+            style={{height:'80px', width:'240px', justifyContent:'center', alignItems:'center'}}
           >
             {isSoldOut ? (
               "SOLD OUT"
-            ) : isActive ? (
+            ) : itemsRedeemed >= 3 ? (
+              "LIMIT"
+            )
+            : isActive ? (
               isMinting ? (
                 <CircularProgress />
               ) : (
@@ -205,8 +237,21 @@ const Home = (props: HomeProps) => {
               />
             )}
           </MintButton>
-        )}
       </MintContainer>
+            )}
+      <div style={{fontSize: '28px', textAlign:"center"}}>
+{wallet && <p>Price : 1 SOL</p>}
+
+{/*
+{wallet && <p>Redeemed : {itemsRedeemed} of 3 </p>}
+*/}
+{/*
+{wallet && <p>Remaining: {itemsRemaining}</p>}
+*/}
+{wallet && <p>Total supply: {itemsAvailable}</p>}
+
+      </div>
+      </div>
 
       <Snackbar
         open={alertState.open}
@@ -220,6 +265,7 @@ const Home = (props: HomeProps) => {
           {alertState.message}
         </Alert>
       </Snackbar>
+      </div>
     </main>
   );
 };
